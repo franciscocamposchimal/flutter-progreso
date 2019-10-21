@@ -5,20 +5,16 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        children: <Widget>[
-          _crearFondo(context),
-          _loginForm(context)
-        ],
+        children: <Widget>[_crearFondo(context), _loginForm(context)],
       ),
     );
   }
 
-    Widget _loginForm(BuildContext context) {
+  Widget _loginForm(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -47,11 +43,11 @@ class HomePageState extends State<HomePage> {
               children: <Widget>[
                 Text('Inicia sesión', style: TextStyle(fontSize: 20.0)),
                 SizedBox(height: 40.0),
-                //_crearEmail(authBloc),
+                _crearEmail(),
                 SizedBox(height: 30.0),
-                //_crearPassword(authBloc),
+                _crearPassword(),
                 SizedBox(height: 30.0),
-                //_crearBoton(authBloc),
+                _crearBoton(),
                 SizedBox(height: 20.0),
                 //_passwordReset(context),
               ],
@@ -64,6 +60,48 @@ class HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Widget _crearEmail() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextField(
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          icon: Icon(Icons.alternate_email, color: Colors.deepPurple),
+          hintText: 'ejemplo@correo.com',
+          labelText: 'Correo electrónico',
+        ),
+      ),
+    );
+  }
+
+  Widget _crearPassword() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextField(
+        obscureText: true,
+        decoration: InputDecoration(
+          icon: Icon(Icons.lock_outline, color: Colors.deepPurple),
+          labelText: 'Contraseña',
+        ),
+      ),
+    );
+  }
+
+  Widget _crearBoton() {
+    return RaisedButton(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+          child: Text('Ingresar'),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+        elevation: 10.0,
+        color: Colors.deepPurple,
+        textColor: Colors.white,
+        onPressed: () {
+          Navigator.of(context).pushNamed('/second');
+        });
   }
 
   Widget _crearFondo(BuildContext context) {
@@ -99,7 +137,7 @@ class HomePageState extends State<HomePage> {
           padding: EdgeInsets.only(top: 80.0),
           child: Column(
             children: <Widget>[
-              Icon(Icons.person_pin_circle, color: Colors.white, size: 100.0),
+              Icon(Icons.thumb_up, color: Colors.white, size: 100.0),
               SizedBox(height: 10.0, width: double.infinity),
               Text('Sesión de usuario',
                   style: TextStyle(color: Colors.white, fontSize: 25.0))
