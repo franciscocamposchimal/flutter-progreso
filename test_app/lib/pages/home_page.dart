@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/bloc/provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
@@ -15,6 +16,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _loginForm(BuildContext context) {
+    final authBloc = Provider.authBloc(context);
     final size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -43,7 +45,7 @@ class HomePageState extends State<HomePage> {
               children: <Widget>[
                 Text('Inicia sesión', style: TextStyle(fontSize: 20.0)),
                 SizedBox(height: 40.0),
-                _crearEmail(),
+                _crearEmail(authBloc),
                 SizedBox(height: 30.0),
                 _crearPassword(),
                 SizedBox(height: 30.0),
@@ -62,17 +64,26 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _crearEmail() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          icon: Icon(Icons.alternate_email, color: Colors.deepPurple),
-          hintText: 'ejemplo@correo.com',
-          labelText: 'Correo electrónico',
-        ),
-      ),
+  Widget _crearEmail(LoginBloc bloc) {
+
+    return StreamBuilder(
+      stream: bloc.emailStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              icon: Icon(Icons.alternate_email, color: Colors.deepPurple),
+              hintText: 'ejemplo@correo.com',
+              labelText: 'Correo electrónico',
+              counterText: snapshot.data,
+              errorText: snapshot.error,    
+            ),
+            onChanged: bloc.changeEmail,
+          ),
+        );
+      }
     );
   }
 
