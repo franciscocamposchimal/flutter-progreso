@@ -47,7 +47,7 @@ class HomePageState extends State<HomePage> {
                 SizedBox(height: 40.0),
                 _crearEmail(authBloc),
                 SizedBox(height: 30.0),
-                _crearPassword(),
+                _crearPassword(authBloc),
                 SizedBox(height: 30.0),
                 _crearBoton(),
                 SizedBox(height: 20.0),
@@ -87,16 +87,24 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _crearPassword() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        obscureText: true,
-        decoration: InputDecoration(
-          icon: Icon(Icons.lock_outline, color: Colors.deepPurple),
-          labelText: 'Contraseña',
-        ),
-      ),
+  Widget _crearPassword(LoginBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.passwordStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+              icon: Icon(Icons.lock_outline, color: Colors.deepPurple),
+              labelText: 'Contraseña',
+               counterText: snapshot.data,
+               errorText: snapshot.error
+            ),
+          onChanged: bloc.changePassword
+          ),
+        );
+      }
     );
   }
 
