@@ -49,7 +49,7 @@ class HomePageState extends State<HomePage> {
                 SizedBox(height: 30.0),
                 _crearPassword(authBloc),
                 SizedBox(height: 30.0),
-                _crearBoton(),
+                _crearBoton(authBloc),
                 SizedBox(height: 20.0),
                 //_passwordReset(context),
               ],
@@ -108,19 +108,28 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _crearBoton() {
-    return RaisedButton(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-          child: Text('Ingresar'),
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        elevation: 10.0,
-        color: Colors.deepPurple,
-        textColor: Colors.white,
-        onPressed: () {
-          Navigator.of(context).pushNamed('/second');
-        });
+  Widget _crearBoton(LoginBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.formValidStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return RaisedButton(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+              child: Text('Ingresar'),
+            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+            elevation: 10.0,
+            color: Colors.deepPurple,
+            textColor: Colors.white,
+            onPressed: () =>  snapshot.hasData ? _login(bloc, context) : null);
+      }
+    );
+  }
+
+  _login(LoginBloc bolc, BuildContext context){
+
+    
+
   }
 
   Widget _crearFondo(BuildContext context) {

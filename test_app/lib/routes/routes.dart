@@ -1,6 +1,6 @@
 
 import 'package:flutter/widgets.dart';
-import 'package:test_app/pages/home_page.dart';
+import 'package:test_app/pages/login/home_page.dart';
 import 'package:test_app/pages/second_page.dart';
 import 'package:test_app/pages/third_page.dart';
 

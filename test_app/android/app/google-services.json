@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "823112328277",
+    "firebase_url": "https://progreso-acb2c.firebaseio.com",
+    "project_id": "progreso-acb2c",
+    "storage_bucket": "progreso-acb2c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823112328277:android:02d6fd840136b93d3860dc",
+        "android_client_info": {
+          "package_name": "com.example.test_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823112328277-shgg8hashlq0e6uuo8d4lpo177a2u8te.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1Zu8h-smK1u30dHnkZv4E3t6dGuFm7iE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823112328277-shgg8hashlq0e6uuo8d4lpo177a2u8te.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
