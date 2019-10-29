@@ -20,4 +20,15 @@ class Validators {
       sink.addError('Más de 6 caracteres por favor');
     }
   });
+
+  final matchPassword =
+      StreamTransformer<Map<String, String>, String>.fromHandlers(
+          handleData: (data, sink) {
+    print(data);
+    if (data['password'] == data['passwordVerification']) {
+      sink.add(data['passwordVerification']);
+    } else {
+      sink.addError('Las contraseñas no coinciden');
+    }
+  });
 }

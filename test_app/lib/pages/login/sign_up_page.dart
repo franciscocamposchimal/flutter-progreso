@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/bloc/provider.dart';
+import 'package:test_app/providers/auth_provider.dart';
+import 'package:test_app/utils/utils.dart';
+import 'package:test_app/widgets/custom_widgets.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -6,11 +10,9 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-
-
   @override
   void dispose() async {
-  
+    await Provider.signupBlocP(context).dispose();
     super.dispose();
   }
 
@@ -19,14 +21,14 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
         body: Stack(
       children: <Widget>[
-        _crearFondo(context),
+        crearFondo(context, 'Nuevo usuario'),
         _loginForm(context),
       ],
     ));
   }
 
   Widget _loginForm(BuildContext context) {
-  
+    final signupBloc = Provider.signupBlocP(context);
     final size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -55,13 +57,13 @@ class _SignupPageState extends State<SignupPage> {
               children: <Widget>[
                 Text('Registro', style: TextStyle(fontSize: 20.0)),
                 SizedBox(height: 60.0),
-                //_crearEmail(),
+                _crearEmail(signupBloc),
                 SizedBox(height: 30.0),
-                //_crearPassword(),
+                _crearPassword(signupBloc),
                 SizedBox(height: 30.0),
-                //_crearPasswordVerification(),
+                _crearPasswordVerification(signupBloc),
                 SizedBox(height: 30.0),
-                //_crearBoton(),
+                _crearBoton(signupBloc),
                 SizedBox(height: 30.0),
               ],
             ),
@@ -89,12 +91,10 @@ class _SignupPageState extends State<SignupPage> {
             )
           ],
         ),
-        onPressed: () {
-          Navigator.pop(context);
-        });
+        onPressed: () => Navigator.pop(context));
   }
 
- /* Widget _crearEmail(SignupBloc bloc) {
+  Widget _crearEmail(SignupBloc bloc) {
     return StreamBuilder(
       stream: bloc.emailStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -170,9 +170,6 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget _crearBoton(SignupBloc bloc) {
-    // formValidStream
-    // snapshot.hasData
-    //  true ? algo si true : algo si false
 
     return StreamBuilder(
       stream: bloc.formValidStream,
@@ -194,59 +191,21 @@ class _SignupPageState extends State<SignupPage> {
 
   _signup(SignupBloc bloc, BuildContext context) async {
     bool res = await AuthProvider().signUp(bloc.email, bloc.password);
-
     if (!res) {
       Navigator.pop(context);
-      mostrarAlerta(context, '¡Error!',
-          'Algo salió mal al crear una nueva cuenta.\nVerifique los datos porfavor...', true);
+      mostrarAlerta(
+          context,
+          '¡Error!',
+          'Algo salió mal al crear una nueva cuenta.\nVerifique los datos porfavor...',
+          true);
     } else {
       Navigator.pop(context);
-      mostrarAlerta(context,'¡Exitoso!',
-          'Cuenta nueva creada.\nComprueba tu identidad con el email de verificaión.\nGracias.', true);
+      mostrarAlerta(
+          context,
+          '¡Exitoso!',
+          'Cuenta nueva creada.\nComprueba tu identidad con el email de verificaión.\nGracias.',
+          true);
     }
-  }*/
-
-  Widget _crearFondo(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    final fondoModaro = Container(
-      height: size.height * 0.4,
-      width: double.infinity,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(colors: <Color>[
-        Color.fromRGBO(63, 63, 156, 1.0),
-        Color.fromRGBO(90, 70, 178, 1.0)
-      ])),
-    );
-
-    final circulo = Container(
-      width: 100.0,
-      height: 100.0,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100.0),
-          color: Color.fromRGBO(255, 255, 255, 0.05)),
-    );
-
-    return Stack(
-      children: <Widget>[
-        fondoModaro,
-        Positioned(top: 90.0, left: 30.0, child: circulo),
-        Positioned(top: -40.0, right: -30.0, child: circulo),
-        Positioned(bottom: -50.0, right: -10.0, child: circulo),
-        Positioned(bottom: 120.0, right: 20.0, child: circulo),
-        Positioned(bottom: -50.0, left: -20.0, child: circulo),
-        Container(
-          padding: EdgeInsets.only(top: 80.0),
-          child: Column(
-            children: <Widget>[
-              Icon(Icons.person_pin_circle, color: Colors.white, size: 100.0),
-              SizedBox(height: 10.0, width: double.infinity),
-              Text('Nuevo usuario',
-                  style: TextStyle(color: Colors.white, fontSize: 25.0))
-            ],
-          ),
-        )
-      ],
-    );
   }
+
 }

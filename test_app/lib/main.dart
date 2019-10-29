@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/bloc/provider.dart';
+import 'package:test_app/pages/MainScreen.dart';
+
 import 'package:test_app/routes/routes.dart';
 import 'package:test_app/theme/appTheme.dart';
 
@@ -17,7 +19,8 @@ class MyApp extends StatelessWidget {
           textTheme: AppTheme.textTheme,
           fontFamily: "Montserrat",
         ),
-        initialRoute: '/',
+        //initialRoute: '/',
+        home: MainScreen(),
         routes: getRoutes(),
       ),
     );

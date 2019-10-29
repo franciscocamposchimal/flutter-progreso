@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/providers/auth_provider.dart';
 
 class SecondPage extends StatelessWidget {
 
@@ -19,7 +20,8 @@ class SecondPage extends StatelessWidget {
             label: Text('Next'),
             icon: Icon(Icons.arrow_forward),
             onPressed: (){
-              Navigator.of(context).pushNamed('/third', arguments: 'Other values');
+              //Navigator.of(context).pushNamed('/third', arguments: 'Other values');
+              AuthProvider().logOut();
             },
           )
         ],

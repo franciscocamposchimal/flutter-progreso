@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:test_app/bloc/provider.dart';
+import 'package:test_app/providers/auth_provider.dart';
+import 'package:test_app/utils/utils.dart';
+import 'package:test_app/widgets/custom_widgets.dart';
 
 class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
@@ -10,7 +14,10 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        children: <Widget>[_crearFondo(context), _loginForm(context)],
+        children: <Widget>[
+          crearFondo(context, 'Sesión de usuario'),
+          _loginForm(context)
+        ],
       ),
     );
   }
@@ -51,128 +58,144 @@ class HomePageState extends State<HomePage> {
                 SizedBox(height: 30.0),
                 _crearBoton(authBloc),
                 SizedBox(height: 20.0),
-                //_passwordReset(context),
+                _passwordReset(context),
               ],
             ),
           ),
-          //_socialDivider(),
-          //_signInButtons(context),
-          //_newAccount(context),
+          _socialDivider(),
+          SizedBox(height: 40.0),
+          _signInButtons(context),
+          _newAccount(context),
           //SizedBox(height: 100.0)
         ],
       ),
     );
   }
 
-  Widget _crearEmail(LoginBloc bloc) {
-
-    return StreamBuilder(
-      stream: bloc.emailStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              icon: Icon(Icons.alternate_email, color: Colors.deepPurple),
-              hintText: 'ejemplo@correo.com',
-              labelText: 'Correo electrónico',
-              counterText: snapshot.data,
-              errorText: snapshot.error,    
-            ),
-            onChanged: bloc.changeEmail,
-          ),
-        );
-      }
+  Widget _signInButtons(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        SignInButton(Buttons.Google, text: '   Entrar con Google',
+            onPressed: () async {
+          bool res = await AuthProvider().loginWithGoogle();
+          if (!res) {
+            mostrarAlerta(context, '¡Error!', 'Algo salió mal...', true);
+          } else {
+            print('GOOGLE SIGNIN $res');
+            //Navigator.pushNamed(context, '/home');
+          }
+        }),
+      ],
     );
+  }
+
+  Widget _crearEmail(LoginBloc bloc) {
+    return StreamBuilder(
+        stream: bloc.emailStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                icon: Icon(Icons.alternate_email, color: Colors.deepPurple),
+                hintText: 'ejemplo@correo.com',
+                labelText: 'Correo electrónico',
+                counterText: snapshot.data,
+                errorText: snapshot.error,
+              ),
+              onChanged: bloc.changeEmail,
+            ),
+          );
+        });
   }
 
   Widget _crearPassword(LoginBloc bloc) {
     return StreamBuilder(
-      stream: bloc.passwordStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline, color: Colors.deepPurple),
-              labelText: 'Contraseña',
-               counterText: snapshot.data,
-               errorText: snapshot.error
-            ),
-          onChanged: bloc.changePassword
-          ),
-        );
-      }
-    );
+        stream: bloc.passwordStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                    icon: Icon(Icons.lock_outline, color: Colors.deepPurple),
+                    labelText: 'Contraseña',
+                    counterText: snapshot.data,
+                    errorText: snapshot.error),
+                onChanged: bloc.changePassword),
+          );
+        });
   }
 
   Widget _crearBoton(LoginBloc bloc) {
     return StreamBuilder(
-      stream: bloc.formValidStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return RaisedButton(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-              child: Text('Ingresar'),
-            ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-            elevation: 10.0,
-            color: Colors.deepPurple,
-            textColor: Colors.white,
-            onPressed: () =>  snapshot.hasData ? _login(bloc, context) : null);
-      }
-    );
+        stream: bloc.formValidStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return RaisedButton(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+                child: Text('Ingresar'),
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              elevation: 10.0,
+              color: Colors.deepPurple,
+              textColor: Colors.white,
+              onPressed: snapshot.hasData ? () => _login(bloc, context) : null);
+        });
   }
 
-  _login(LoginBloc bolc, BuildContext context){
-
-    
-
+  _login(LoginBloc bloc, BuildContext context) async {
+    bool res = await AuthProvider().signInWithEmail(bloc.email, bloc.password);
+    if (!res) {
+      mostrarAlerta(context, '¡Error!', 'Algo salió mal...', true);
+    }
   }
 
-  Widget _crearFondo(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  Widget _newAccount(BuildContext context) {
+    return FlatButton(
+        child: Text(
+          '¿Crear cuenta nueva?',
+          style: TextStyle(color: Colors.blueAccent),
+        ),
+        onPressed: () => Navigator.pushNamed(context, '/signup'));
+  }
 
-    final fondoModaro = Container(
-      height: size.height * 0.4,
-      width: double.infinity,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(colors: <Color>[
-        Color.fromRGBO(63, 63, 156, 1.0),
-        Color.fromRGBO(90, 70, 178, 1.0)
-      ])),
-    );
-
-    final circulo = Container(
-      width: 100.0,
-      height: 100.0,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100.0),
-          color: Color.fromRGBO(255, 255, 255, 0.05)),
-    );
-
-    return Stack(
+  Widget _passwordReset(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        fondoModaro,
-        Positioned(top: 90.0, left: 30.0, child: circulo),
-        Positioned(top: -40.0, right: -30.0, child: circulo),
-        Positioned(bottom: -50.0, right: -10.0, child: circulo),
-        Positioned(bottom: 120.0, right: 20.0, child: circulo),
-        Positioned(bottom: -50.0, left: -20.0, child: circulo),
-        Container(
-          padding: EdgeInsets.only(top: 80.0),
-          child: Column(
-            children: <Widget>[
-              Icon(Icons.thumb_up, color: Colors.white, size: 100.0),
-              SizedBox(height: 10.0, width: double.infinity),
-              Text('Sesión de usuario',
-                  style: TextStyle(color: Colors.white, fontSize: 25.0))
-            ],
-          ),
-        )
+        FlatButton(
+            child: Text(
+              '¿Olvidó su contraseña?',
+              style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.blueAccent),
+            ),
+            onPressed: () => Navigator.pushNamed(context, '/resetPassword')),
       ],
     );
   }
+
+  Widget _socialDivider() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        horizontalLine(),
+        Text("Acceso rápido con",
+            style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Medium")),
+        horizontalLine()
+      ],
+    );
+  }
+
+  Widget horizontalLine() => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Container(
+          width: 80.0,
+          height: 1.0,
+          color: Colors.black26.withOpacity(.2),
+        ),
+      );
 }
