@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/bloc/provider.dart';
-import 'package:test_app/providers/auth_provider.dart';
 import 'package:test_app/utils/utils.dart';
 import 'package:test_app/widgets/custom_widgets.dart';
 
@@ -190,7 +189,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   _signup(SignupBloc bloc, BuildContext context) async {
-    bool res = await AuthProvider().signUp(bloc.email, bloc.password);
+    bool res = await bloc.signUp();
     if (!res) {
       Navigator.pop(context);
       mostrarAlerta(

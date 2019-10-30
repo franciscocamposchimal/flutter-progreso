@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:test_app/utils/utils.dart';
 
 class AuthProvider {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,6 +13,7 @@ class AuthProvider {
       return true;
     } catch (e) {
       print('Error al crear cuenta...');
+      printError(e.toString());
       return false;
     }
   }
@@ -43,7 +45,7 @@ class AuthProvider {
         accessToken: (await account.authentication).accessToken,
       ));
       print('==== GOOGLE ====');
-      print(res.user);
+      printSuccess(res.user.email);
       print('==== GOOGLE ====');
       if (res.user == null)
         return false;
@@ -51,7 +53,7 @@ class AuthProvider {
         return true;
     } catch (e) {
       print("Error logging with google");
-      print(e);
+      printError(e);
       return false;
     }
   }
@@ -65,13 +67,18 @@ class AuthProvider {
     }
   }
 
+  Future<String> getUrl() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.photoUrl;
+  }
+
   Future<void> logOut() async {
     try {
       await _auth.signOut();
-      print("Exit..now go out!");
+      printError("Exit..now go out!");
     } catch (e) {
       print("error logging out");
-      print(e);
+      printError(e);
     }
   }
 }

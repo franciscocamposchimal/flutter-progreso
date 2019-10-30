@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+
 import 'package:test_app/bloc/provider.dart';
-import 'package:test_app/providers/auth_provider.dart';
 import 'package:test_app/utils/utils.dart';
 import 'package:test_app/widgets/custom_widgets.dart';
+
+ProgressDialog pr;
 
 class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
@@ -12,6 +15,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, type: ProgressDialogType.Normal);
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -64,7 +68,7 @@ class HomePageState extends State<HomePage> {
           ),
           _socialDivider(),
           SizedBox(height: 40.0),
-          _signInButtons(context),
+          _signInButtons(context, authBloc),
           _newAccount(context),
           //SizedBox(height: 100.0)
         ],
@@ -72,21 +76,29 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _signInButtons(BuildContext context) {
+  Widget _signInButtons(BuildContext context, LoginBloc bloc) {
+    pr.style(message: 'Espere un momento porfavor...');
     return Column(
       children: <Widget>[
-        SignInButton(Buttons.Google, text: '   Entrar con Google',
-            onPressed: () async {
-          bool res = await AuthProvider().loginWithGoogle();
-          if (!res) {
-            mostrarAlerta(context, '¡Error!', 'Algo salió mal...', true);
-          } else {
-            print('GOOGLE SIGNIN $res');
-            //Navigator.pushNamed(context, '/home');
-          }
-        }),
+        StreamBuilder(
+            stream: bloc.isLoadingStream,
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              printDebug('SNAP: ${snapshot.data}');
+              return SignInButton(Buttons.Google,
+                  text: '   Entrar con Google',
+                  onPressed: () async => snapshot.hasData
+                      ? snapshot.data ? pr.show() : _sigInGoogle(bloc)
+                      : await bloc.signInWithGoogle());
+            }),
       ],
     );
+  }
+
+  _sigInGoogle(LoginBloc bloc) async {
+    if (pr.isShowing()) {
+      pr.hide();
+    }
+    await bloc.signInWithGoogle();
   }
 
   Widget _crearEmail(LoginBloc bloc) {
@@ -147,7 +159,9 @@ class HomePageState extends State<HomePage> {
   }
 
   _login(LoginBloc bloc, BuildContext context) async {
-    bool res = await AuthProvider().signInWithEmail(bloc.email, bloc.password);
+    
+    //bool res = await AuthProvider().signInWithEmail(bloc.email, bloc.password);
+    bool res = await bloc.submit();
     if (!res) {
       mostrarAlerta(context, '¡Error!', 'Algo salió mal...', true);
     }
