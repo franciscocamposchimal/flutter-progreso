@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:test_app/providers/firebase_provider.dart';
 import 'package:test_app/utils/utils.dart';
 
 class AuthProvider {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  //DB instance
+  final FireStoreProvider _db = FireStoreProvider('users');
 
   Future<bool> signUp(String email, String password) async {
     try {
@@ -47,10 +51,13 @@ class AuthProvider {
       print('==== GOOGLE ====');
       printSuccess(res.user.email);
       print('==== GOOGLE ====');
-      if (res.user == null)
+      if (res.user == null) {
         return false;
-      else
+      } else {
+        await _updateUserData(res.user);
+        printSuccess('success insert...');
         return true;
+      }
     } catch (e) {
       print("Error logging with google");
       printError(e);
@@ -80,5 +87,17 @@ class AuthProvider {
       print("error logging out");
       printError(e);
     }
+  }
+
+  Future _updateUserData(FirebaseUser user) async {
+    printSuccess('insert user ${user.uid}...');
+    Map<String, dynamic> userToSend = {
+      'uid': user.uid,
+      'email': user.email,
+      'photoURL': user.photoUrl,
+      'displayName': user.displayName,
+      'timestamp': Timestamp.now()
+    };
+    await _db.update(userToSend, user.email);
   }
 }

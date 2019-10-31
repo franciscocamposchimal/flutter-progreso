@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/providers/auth_provider.dart';
+import 'package:test_app/shared_preferences/shared_preferences.dart';
+import 'package:test_app/utils/utils.dart';
 
 class SecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _prefs = new PreferenciasUsuario();
+    printDebug(_prefs.user.photoURL);
     return Scaffold(
       appBar: _appBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          _avatar(_prefs.user.photoURL),
+          SizedBox(height: 40.0),
           Center(child: Text('Welcome!!')),
           SizedBox(height: 40.0),
-          RaisedButton.icon(
-            label: Text('Next'),
-            icon: Icon(Icons.arrow_forward),
-            onPressed: () {
-              //Navigator.of(context).pushNamed('/third', arguments: 'Other values');
-              AuthProvider().logOut();
-            },
-          )
+          CircularProgressIndicator()
         ],
       ),
     );
@@ -56,5 +55,17 @@ class SecondPage extends StatelessWidget {
       onPressed: () => AuthProvider().logOut(),
       icon: Icon(Icons.power_settings_new, color: Colors.black54),
     );
+  }
+
+  Widget _avatar(String photo) {
+    return Container(
+        width: 100.0,
+        height: 100.0,
+        decoration: BoxDecoration(
+            color: Colors.red,
+            image:
+                DecorationImage(image: NetworkImage(photo), fit: BoxFit.cover),
+            borderRadius: BorderRadius.all(Radius.circular(75.0)),
+            boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)]));
   }
 }

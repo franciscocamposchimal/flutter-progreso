@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:test_app/utils/utils.dart';
 
 class FireStoreProvider {
   final Firestore _db = Firestore.instance;
@@ -37,7 +38,13 @@ class FireStoreProvider {
     return ref.document(id).updateData(data);
   }
 
-  Future<void> updateUser(Map<String, dynamic> data, String id) {
-    return ref.document(id).setData(data, merge: true);
+  Future update(Map<String, dynamic> data, String id) async {
+     try {
+       await ref.document(id).setData(data, merge: true);
+       printSuccess('Document inserted...');
+     } catch (e) {
+       printError('Inserted error...');
+       printError(e.toString());
+     }
   }
 }

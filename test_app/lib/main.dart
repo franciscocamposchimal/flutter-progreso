@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/services.dart';
+import 'package:test_app/shared_preferences/shared_preferences.dart';
 import 'package:test_app/bloc/provider.dart';
 import 'package:test_app/pages/MainScreen.dart';
 import 'package:test_app/utils/utils.dart';
@@ -6,7 +8,13 @@ import 'package:test_app/utils/utils.dart';
 import 'package:test_app/routes/routes.dart';
 import 'package:test_app/theme/appTheme.dart';
 
-void main() => runApp(MyApp());
+//void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = new PreferenciasUsuario();
+  await prefs.initPrefs();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override

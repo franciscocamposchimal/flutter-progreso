@@ -86,18 +86,18 @@ class HomePageState extends State<HomePage> {
               printDebug('SNAP: ${snapshot.data}');
               return SignInButton(Buttons.Google,
                   text: '   Entrar con Google',
-                  onPressed: () async => snapshot.hasData
-                      ? snapshot.data ? pr.show() : _sigInGoogle(bloc)
-                      : await bloc.signInWithGoogle());
+                  onPressed: () async => _sigInGoogleTrue(bloc));
             }),
       ],
     );
   }
 
-  _sigInGoogle(LoginBloc bloc) async {
-    if (pr.isShowing()) {
-      pr.hide();
-    }
+  _sigInGoogleTrue(LoginBloc bloc) async {
+    // pr.show();
+    // if (pr.isShowing()) {
+    //   pr.hide();
+    //   await bloc.signInWithGoogle();
+    // }
     await bloc.signInWithGoogle();
   }
 
@@ -159,7 +159,6 @@ class HomePageState extends State<HomePage> {
   }
 
   _login(LoginBloc bloc, BuildContext context) async {
-    
     //bool res = await AuthProvider().signInWithEmail(bloc.email, bloc.password);
     bool res = await bloc.submit();
     if (!res) {

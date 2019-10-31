@@ -83,9 +83,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             )
           ],
         ),
-        onPressed: () {
-          Navigator.pop(context);
-        });
+        onPressed: () => Navigator.pop(context));
   }
 
   Widget _crearEmail() {

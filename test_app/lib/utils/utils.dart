@@ -3,7 +3,7 @@ import 'package:ansicolor/ansicolor.dart';
 
 AnsiPen _penBlueAccent = new AnsiPen()..white(bold: true)..rgb(r: 0.0, g: 1.0, b: 3.0);
 AnsiPen _penRed = new AnsiPen()..white(bold: true)..rgb(r: 255.0, g: 0.0, b: 0.0);
-AnsiPen _penGreen = new AnsiPen()..white(bold: true)..rgb(r: 0.0, g: 255.0, b: 43.0);
+AnsiPen _penGreen = new AnsiPen()..white(bold: true)..rgb(r: 0.0, g: 255.0, b: 0.0);
 
 void printDebug(String debug){
   print(_penBlueAccent(debug));
