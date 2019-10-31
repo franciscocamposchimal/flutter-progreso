@@ -9,12 +9,10 @@ class SecondPage extends StatelessWidget {
     final _prefs = new PreferenciasUsuario();
     printDebug(_prefs.user.photoURL);
     return Scaffold(
-      appBar: _appBar(),
+      appBar: _appBar(_prefs.user.photoURL),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _avatar(_prefs.user.photoURL),
-          SizedBox(height: 40.0),
           Center(child: Text('Welcome!!')),
           SizedBox(height: 40.0),
           CircularProgressIndicator()
@@ -23,15 +21,17 @@ class SecondPage extends StatelessWidget {
     );
   }
 
-  Widget _appBar() {
+  Widget _appBar(String photo) {
     return AppBar(
       elevation: 2.0,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.deepPurple,
+      leading: _avatar(photo),
       title: Text('Dashboard',
           style: TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontWeight: FontWeight.w700,
               fontSize: 30.0)),
+      centerTitle: true,
       actions: <Widget>[
         Container(
           margin: EdgeInsets.only(right: 8.0),
@@ -51,21 +51,23 @@ class SecondPage extends StatelessWidget {
     return FlatButton.icon(
       label: Text('Log out',
           style: TextStyle(
-              color: Colors.blue, fontWeight: FontWeight.w700, fontSize: 14.0)),
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14.0)),
       onPressed: () => AuthProvider().logOut(),
-      icon: Icon(Icons.power_settings_new, color: Colors.black54),
+      icon: Icon(Icons.power_settings_new, color: Colors.white),
     );
   }
 
   Widget _avatar(String photo) {
-    return Container(
-        width: 100.0,
-        height: 100.0,
-        decoration: BoxDecoration(
-            color: Colors.red,
-            image:
-                DecorationImage(image: NetworkImage(photo), fit: BoxFit.cover),
-            borderRadius: BorderRadius.all(Radius.circular(75.0)),
-            boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)]));
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+          decoration: BoxDecoration(
+        color: Colors.red,
+        image: DecorationImage(image: NetworkImage(photo), fit: BoxFit.cover),
+        borderRadius: BorderRadius.all(Radius.circular(75.0)),
+      )),
+    );
   }
 }

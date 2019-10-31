@@ -41,7 +41,7 @@ class PreferenciasUsuario {
     final userForStore = User.fromJsonMap({
       "uuid": user.uid,
       "email": user.email,
-      "photoURL": user.photoUrl,
+      "photoURL": (user.photoUrl != null) ? user.photoUrl : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUC64VZctJ0un9UBnbUKtj-blhw02PeDEQIMOqovc215LWYKu&s',
       "displayName": user.displayName,
       "timestamp" : Timestamp.now().toString()
     });
