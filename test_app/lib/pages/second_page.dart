@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/providers/auth_provider.dart';
 import 'package:test_app/shared_preferences/shared_preferences.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 
 class SecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _prefs = new PreferenciasUsuario();
-    printDebug(_prefs.user.photoURL);
+    utils.printDebug(_prefs.user.photoURL);
     return Scaffold(
       appBar: _appBar(_prefs.user.photoURL),
       body: Column(
@@ -18,6 +18,28 @@ class SecondPage extends StatelessWidget {
           CircularProgressIndicator()
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _formDialog(context),
+      ),
+    );
+  }
+
+  void _formDialog(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            children: <Widget>[
+              //_getPhoto(),
+              //_getUbication(),
+              //_getDescription(),
+              //_submit(),
+            ],
+          ),
+        );
+      }
     );
   }
 
