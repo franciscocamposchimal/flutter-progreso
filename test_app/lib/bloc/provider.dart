@@ -6,9 +6,13 @@ export 'package:test_app/bloc/login_bloc.dart';
 import 'package:test_app/bloc/signup_bloc.dart';
 export 'package:test_app/bloc/signup_bloc.dart';
 
+import 'package:test_app/bloc/reports_bloc.dart';
+export 'package:test_app/bloc/reports_bloc.dart';
+
 class Provider extends InheritedWidget {
   final loginBloc = new LoginBloc();
   final signupBloc = new SignupBloc();
+  final reportsBloc = new ReportsBloc();
   static Provider _instancia;
 
   factory Provider({Key key, Widget child}) {
@@ -28,9 +32,13 @@ class Provider extends InheritedWidget {
         .loginBloc;
   }
 
-  
   static SignupBloc signupBlocP(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(Provider) as Provider)
         .signupBloc;
+  }
+
+  static ReportsBloc reportsBlocP(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(Provider) as Provider)
+        .reportsBloc;
   }
 }

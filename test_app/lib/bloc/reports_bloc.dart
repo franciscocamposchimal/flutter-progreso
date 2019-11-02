@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:test_app/models/report_model.dart';
 import 'package:test_app/providers/reports_provider.dart';
 
-class ReposrtBloc {
+class ReportsBloc {
   final _reportsController = BehaviorSubject<List<Report>>();
   final _loadingController  = BehaviorSubject<bool>();
   final _reportsProvider   = ReportsProvider();
