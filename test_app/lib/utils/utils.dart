@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ansicolor/ansicolor.dart';
 
+String apiKey = 'pk.eyJ1IjoiZnJhbmtvY2FtcG9zIiwiYSI6ImNqbGRiMmJlMzA5ZG0zd3BjendmNTF5NmgifQ.tCQ9eJCRKnADR-AN6VQSFQ';
+
 AnsiPen _penBlueAccent = new AnsiPen()..white(bold: true)..rgb(r: 0.0, g: 1.0, b: 3.0);
 AnsiPen _penRed = new AnsiPen()..white(bold: true)..rgb(r: 255.0, g: 0.0, b: 0.0);
 AnsiPen _penGreen = new AnsiPen()..white(bold: true)..rgb(r: 0.0, g: 255.0, b: 0.0);

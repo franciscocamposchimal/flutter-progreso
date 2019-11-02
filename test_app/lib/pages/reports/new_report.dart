@@ -1,8 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mapbox_search/mapbox_search.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
+
 import 'package:test_app/models/report_model.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 
 class NewReportDialog extends StatefulWidget {
   @override
@@ -10,13 +14,19 @@ class NewReportDialog extends StatefulWidget {
 }
 
 class _NewReportDialogState extends State<NewReportDialog> {
+  MapBoxStaticImage staticImage = MapBoxStaticImage(apiKey: utils.apiKey);
+  Geolocator geolocator = Geolocator();
+  Position position = Position();
   Report report = new Report();
   //bool _guardando = false;
   File foto;
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
+          elevation: 2.0,
+          backgroundColor: Colors.deepPurple,
           title: const Text('Nuevo reporte'),
           actions: [
             new FlatButton(
@@ -30,20 +40,73 @@ class _NewReportDialogState extends State<NewReportDialog> {
                         .copyWith(color: Colors.white))),
           ],
         ),
-        body: Column(
-          children: <Widget>[
-            SizedBox(height: 20.00),
-            _takeImage(),
-            //_getUbication(),
-            //_getDescription(),
-            //_submit()
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 20.00),
+              _takeImage(),
+              _getUbication(),
+              SizedBox(height: 20.00),
+              _getDescription(),
+              //_submit()
+            ],
+          ),
         ));
+  }
+
+  Widget _getDescription() {
+    return Center(
+      child: Container(
+        height: 250.0,
+        width: 300.0,
+        child: TextField(
+            maxLines: 6,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Bache, Calle en reparación...',
+              labelText: 'Escríbenos',
+            )),
+      ),
+    );
+  }
+
+  Widget _getUbication() {
+    return Center(
+      child: FutureBuilder(
+        future: _getLocation(),
+        builder: (context, snapshot) {
+          print(snapshot);
+          return Container(
+            height: 250.0,
+            width: 300.0,
+            child: Image.network(
+              getStaticImageWithMarker(),
+              fit: BoxFit.cover,
+            ),
+          );
+        }
+      ),
+    );
+  }
+
+  String getStaticImageWithMarker() {
+    return staticImage.getStaticUrlWithMarker(
+      center: Location(lat: position.latitude, lng: position.longitude),
+      marker: MapBoxMarker(
+          markerColor: Colors.deepPurple,
+          markerLetter: 'p',
+          markerSize: MarkerSize.LARGE),
+      height: 250,
+      width: 300,
+      zoomLevel: 13,
+      style: MapBoxStyle.Mapbox_Streets,
+      render2x: true,
+    );
   }
 
   Widget _takeImage() {
     return Center(
-          child: Container(
+      child: Container(
         //decoration: BoxDecoration(border: Border.all()),
         height: 250.0,
         width: 300.0,
@@ -115,9 +178,21 @@ class _NewReportDialogState extends State<NewReportDialog> {
   _procesarImagen(ImageSource origen) async {
     foto = await ImagePicker.pickImage(
         source: origen, maxWidth: 300, maxHeight: 200);
+    utils.printDebug(foto.path);
     if (foto != null) {
       report.photoUrl = null;
     }
     setState(() {});
+  }
+
+  Future<Position> _getLocation() async {
+    var currentLocation;
+    try {
+      currentLocation = await geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+    } catch (e) {
+      currentLocation = null;
+    }
+    return currentLocation;
   }
 }
