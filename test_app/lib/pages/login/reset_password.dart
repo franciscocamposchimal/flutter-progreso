@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/providers/auth_provider.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 import 'package:test_app/widgets/custom_widgets.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -99,7 +99,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               labelText: 'Correo electrónico',
             ),
             validator: (value) {
-              if (isEmail(value)) {
+              if (utils.isEmail(value)) {
                 setState(() {
                   _emailToreset = value;
                 });
@@ -130,14 +130,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     bool res = await AuthProvider().resetPassword(_emailToreset);
     if (!res) {
       Navigator.pop(context);
-      mostrarAlerta(
+      utils.mostrarAlerta(
           context,
           '¡Error!',
           'Algo salió mal al enviar email.\nVerifique los datos porfavor...',
           true);
     } else {
       Navigator.pop(context);
-      mostrarAlerta(context, '¡Exitoso!',
+      utils.mostrarAlerta(context, '¡Exitoso!',
           'Verifica tu email para cambiar la contraseña.\nGracias.', true);
     }
   }

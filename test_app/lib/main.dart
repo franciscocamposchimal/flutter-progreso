@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:test_app/shared_preferences/shared_preferences.dart';
 import 'package:test_app/bloc/provider.dart';
 import 'package:test_app/pages/MainScreen.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 
 import 'package:test_app/routes/routes.dart';
 import 'package:test_app/theme/appTheme.dart';
@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    printDebug('state = $state');
+    utils.printDebug('state = $state');
     if(state == AppLifecycleState.inactive){
       print("LOGOUT");
     }

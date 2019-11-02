@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:test_app/providers/firebase_provider.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 
 class AuthProvider {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -11,14 +11,14 @@ class AuthProvider {
   final FireStoreProvider _db = FireStoreProvider('users');
 
   Future<bool> signUp(String email, String password) async {
-    printDebug('$email and $password');
+    utils.printDebug('$email and $password');
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       return true;
     } catch (e) {
       print('Error al crear cuenta...');
-      printError(e.toString());
+      utils.printError(e.toString());
       return false;
     }
   }
@@ -52,18 +52,18 @@ class AuthProvider {
         accessToken: (await account.authentication).accessToken,
       ));
       print('==== GOOGLE ====');
-      printSuccess(res.user.email);
+      utils.printSuccess(res.user.email);
       print('==== GOOGLE ====');
       if (res.user == null) {
         return false;
       } else {
         await _updateUserData(res.user);
-        printSuccess('success insert...');
+        utils.printSuccess('success insert...');
         return true;
       }
     } catch (e) {
       print("Error logging with google");
-      printError(e);
+      utils.printError(e.toString());
       return false;
     }
   }
@@ -85,15 +85,15 @@ class AuthProvider {
   Future<void> logOut() async {
     try {
       await _auth.signOut();
-      printError("Exit..now go out!");
+      utils.printError("Exit..now go out!");
     } catch (e) {
       print("error logging out");
-      printError(e);
+      utils.printError(e.toString());
     }
   }
 
   Future _updateUserData(FirebaseUser user) async {
-    printSuccess('insert user ${user.uid}...');
+    utils.printSuccess('insert user ${user.uid}...');
     Map<String, dynamic> userToSend = {
       'uid': user.uid,
       'email': user.email,

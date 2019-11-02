@@ -3,7 +3,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 import 'package:test_app/bloc/provider.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 import 'package:test_app/widgets/custom_widgets.dart';
 
 ProgressDialog pr;
@@ -83,7 +83,7 @@ class HomePageState extends State<HomePage> {
         StreamBuilder(
             stream: bloc.isLoadingStream,
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              printDebug('SNAP: ${snapshot.data}');
+              utils.printDebug('SNAP: ${snapshot.data}');
               return SignInButton(Buttons.Google,
                   text: '   Entrar con Google',
                   onPressed: () async => _sigInGoogleTrue(bloc));
@@ -162,7 +162,7 @@ class HomePageState extends State<HomePage> {
     //bool res = await AuthProvider().signInWithEmail(bloc.email, bloc.password);
     bool res = await bloc.submit();
     if (!res) {
-      mostrarAlerta(context, '¡Error!', 'Algo salió mal...', true);
+      utils.mostrarAlerta(context, '¡Error!', 'Algo salió mal...', true);
     }
   }
 

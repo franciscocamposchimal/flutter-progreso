@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:test_app/bloc/validators.dart';
 import 'package:test_app/providers/auth_provider.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 
 class LoginBloc with Validators {
   final _emailController = BehaviorSubject<String>();
@@ -35,7 +35,7 @@ class LoginBloc with Validators {
       _setIsLoading(true);
       return await AuthProvider().loginWithGoogle();
     } catch (e) {
-      printError(e);
+      utils.printError(e.toString());
       _isLoadingController.addError(e);
     } finally {
       _setIsLoading(false);

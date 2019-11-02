@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/bloc/provider.dart';
-import 'package:test_app/utils/utils.dart';
+import 'package:test_app/utils/utils.dart' as utils;
 import 'package:test_app/widgets/custom_widgets.dart';
 
 class SignupPage extends StatefulWidget {
@@ -192,14 +192,14 @@ class _SignupPageState extends State<SignupPage> {
     bool res = await bloc.signUp();
     if (!res) {
       Navigator.pop(context);
-      mostrarAlerta(
+      utils.mostrarAlerta(
           context,
           '¡Error!',
           'Algo salió mal al crear una nueva cuenta.\nVerifique los datos porfavor...',
           true);
     } else {
       Navigator.pop(context);
-      mostrarAlerta(
+      utils.mostrarAlerta(
           context,
           '¡Exitoso!',
           'Cuenta nueva creada.\nComprueba tu identidad con el email de verificaión.\nGracias.',
