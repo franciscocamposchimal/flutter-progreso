@@ -16,7 +16,6 @@ class _SecondPageState extends State<SecondPage> {
     //final reportsBloc = Provider.reportsBlocP(context);
     final _prefs = new PreferenciasUsuario();
     utils.printDebug(_prefs.user.photoURL);
-
     return Scaffold(
       appBar: _appBar(_prefs.user.photoURL),
       body: Column(

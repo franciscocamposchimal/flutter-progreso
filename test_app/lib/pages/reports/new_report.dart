@@ -20,7 +20,6 @@ class _NewReportDialogState extends State<NewReportDialog> {
   Report report = new Report();
   //bool _guardando = false;
   File foto;
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -75,7 +74,9 @@ class _NewReportDialogState extends State<NewReportDialog> {
       child: FutureBuilder(
         future: _getLocation(),
         builder: (context, snapshot) {
-          print(snapshot);
+          print("======================");
+          print(snapshot.data.latitude);
+          print("======================");
           return Container(
             height: 250.0,
             width: 300.0,
@@ -91,14 +92,14 @@ class _NewReportDialogState extends State<NewReportDialog> {
 
   String getStaticImageWithMarker() {
     return staticImage.getStaticUrlWithMarker(
-      center: Location(lat: position.latitude, lng: position.longitude),
+      center: Location(lat: 21.0337277, lng: -89.6345785),
       marker: MapBoxMarker(
           markerColor: Colors.deepPurple,
           markerLetter: 'p',
           markerSize: MarkerSize.LARGE),
       height: 250,
       width: 300,
-      zoomLevel: 13,
+      zoomLevel: 16,
       style: MapBoxStyle.Mapbox_Streets,
       render2x: true,
     );
