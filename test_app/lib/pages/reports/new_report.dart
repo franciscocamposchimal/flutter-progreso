@@ -72,27 +72,34 @@ class _NewReportDialogState extends State<NewReportDialog> {
   Widget _getUbication() {
     return Center(
       child: FutureBuilder(
-        future: _getLocation(),
-        builder: (context, snapshot) {
-          print("======================");
-          print(snapshot.data.latitude);
-          print("======================");
-          return Container(
-            height: 250.0,
-            width: 300.0,
-            child: Image.network(
-              getStaticImageWithMarker(),
-              fit: BoxFit.cover,
-            ),
-          );
-        }
-      ),
+          future: _getLocation(),
+          builder: (context, snapshot) {
+            //print("======================");
+            //print(snapshot.data.latitude);
+            //print("======================");
+            if (snapshot.hasData) {
+              return Container(
+                height: 250.0,
+                width: 300.0,
+                child: Image.network(
+                  getStaticImageWithMarker(snapshot.data),
+                  fit: BoxFit.cover,
+                ),
+              );
+            } else {
+              return Container(
+                height: 250.0,
+                width: 300.0,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+          }),
     );
   }
 
-  String getStaticImageWithMarker() {
+  String getStaticImageWithMarker(Position pos) {
     return staticImage.getStaticUrlWithMarker(
-      center: Location(lat: 21.0337277, lng: -89.6345785),
+      center: Location(lat: pos.latitude, lng: pos.longitude),
       marker: MapBoxMarker(
           markerColor: Colors.deepPurple,
           markerLetter: 'p',
