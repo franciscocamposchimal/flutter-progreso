@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_search/mapbox_search.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:test_app/bloc/provider.dart';
 
 import 'package:test_app/models/report_model.dart';
 import 'package:test_app/utils/utils.dart' as utils;
@@ -18,10 +19,13 @@ class _NewReportDialogState extends State<NewReportDialog> {
   Geolocator geolocator = Geolocator();
   Position position = Position();
   Report report = new Report();
+  ReportsBloc reportBloc;
   //bool _guardando = false;
   File foto;
+
   @override
   Widget build(BuildContext context) {
+    reportBloc = Provider.reportsBlocP(context);
     return new Scaffold(
         appBar: AppBar(
           elevation: 2.0,
@@ -29,15 +33,12 @@ class _NewReportDialogState extends State<NewReportDialog> {
           title: Text('Nuevo reporte'),
           actions: [
             FlatButton(
-                onPressed: () {
+                onPressed: () async {
                   //Navigator.of(context).pop();
-                  _submitReport();
+                  await _submitReport(reportBloc);
+                  Navigator.of(context).pop();
                 },
-                child: Text('Guardar',
-                    style: Theme.of(context)
-                        .textTheme
-                        .subhead
-                        .copyWith(color: Colors.white))),
+                child: _loadingIndicator(reportBloc)),
           ],
         ),
         body: SingleChildScrollView(
@@ -52,6 +53,21 @@ class _NewReportDialogState extends State<NewReportDialog> {
             ],
           ),
         ));
+  }
+
+  Widget _loadingIndicator(ReportsBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.isLoadingStream,
+      builder: (BuildContext cntx, AsyncSnapshot<bool> snapshot) {
+        return snapshot.hasData
+            ? snapshot.data ? CircularProgressIndicator() : Text('Guardar', style: _textStyle())
+            : Text('Guardar', style: _textStyle());
+      },
+    );
+  }
+
+  TextStyle _textStyle() {
+    return Theme.of(context).textTheme.subhead.copyWith(color: Colors.white);
   }
 
   Widget _getDescription() {
@@ -74,7 +90,7 @@ class _NewReportDialogState extends State<NewReportDialog> {
     return Center(
       child: FutureBuilder(
           future: _getLocation(),
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
             return Container(
               height: 250.0,
               width: 300.0,
@@ -181,13 +197,15 @@ class _NewReportDialogState extends State<NewReportDialog> {
     } catch (e) {
       currentLocation = null;
     }
-    report.ubication = '{"lat":${currentLocation.latitude},"lon":${currentLocation.longitude} }';
+    report.ubication =
+        '{"lat":${currentLocation.latitude},"lon":${currentLocation.longitude} }';
     return currentLocation;
   }
 
-  void _submitReport() {
+  Future<void> _submitReport(ReportsBloc bloc) async {
     print("Save");
     print(foto?.path);
     print(report.ubication);
+    await bloc.addReport(foto, report);
   }
 }

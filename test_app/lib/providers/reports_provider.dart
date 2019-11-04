@@ -26,9 +26,14 @@ class ReportsProvider {
 
   //CRUD
   Future<bool> create(Report report) async {
-    var newReport = await _db.addDocument(report.toJson());
-    print(newReport);
-    return true;
+    try {
+      await _db.addDocument(report.toJson());
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+    
   }
 
   Future<Report> getOne(String id) async {
