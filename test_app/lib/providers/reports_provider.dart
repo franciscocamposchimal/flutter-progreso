@@ -1,9 +1,28 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'firebase_provider.dart';
 import 'package:test_app/models/report_model.dart';
 
 class ReportsProvider {
   //DB instance
   final FireStoreProvider _db = FireStoreProvider('reports');
+  //firestore instance
+  final FirebaseStorage _storage =
+      FirebaseStorage(storageBucket: 'gs://progreso-acb2c.appspot.com');
+  StorageUploadTask _uploadTask;
+
+  Future<String> uploadFile(File image) async {
+    /// Unique file name for the file
+    String filePath = 'images/${DateTime.now()}.jpg';
+    StorageReference storageReference = _storage.ref().child(filePath);
+    _uploadTask = storageReference.putFile(image);    
+    await _uploadTask.onComplete;    
+    print('File Uploaded');    
+    String url = await storageReference.getDownloadURL();
+    return url;
+ }
 
   //CRUD
   Future<bool> create(Report report) async {

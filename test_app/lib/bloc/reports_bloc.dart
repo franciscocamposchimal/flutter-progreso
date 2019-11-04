@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:rxdart/rxdart.dart';
 import 'package:test_app/models/report_model.dart';
 import 'package:test_app/providers/reports_provider.dart';
@@ -16,9 +18,11 @@ class ReportsBloc {
     _reportsController.sink.add( reports );
   }
 
-  void agregarProducto( Report report ) async {
+  void agregarProducto( File image, Report report ) async {
 
     _loadingController.sink.add(true);
+    String fileUrl = await _reportsProvider.uploadFile(image);
+    report.photoUrl = fileUrl;
     await _reportsProvider.create( report );
     _loadingController.sink.add(false);
 

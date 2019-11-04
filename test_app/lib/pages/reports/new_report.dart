@@ -23,16 +23,17 @@ class _NewReportDialogState extends State<NewReportDialog> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
+        appBar: AppBar(
           elevation: 2.0,
           backgroundColor: Colors.deepPurple,
-          title: const Text('Nuevo reporte'),
+          title: Text('Nuevo reporte'),
           actions: [
-            new FlatButton(
+            FlatButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  //Navigator.of(context).pop();
+                  _submitReport();
                 },
-                child: new Text('Guardar',
+                child: Text('Guardar',
                     style: Theme.of(context)
                         .textTheme
                         .subhead
@@ -74,25 +75,16 @@ class _NewReportDialogState extends State<NewReportDialog> {
       child: FutureBuilder(
           future: _getLocation(),
           builder: (context, snapshot) {
-            //print("======================");
-            //print(snapshot.data.latitude);
-            //print("======================");
-            if (snapshot.hasData) {
-              return Container(
-                height: 250.0,
-                width: 300.0,
-                child: Image.network(
-                  getStaticImageWithMarker(snapshot.data),
-                  fit: BoxFit.cover,
-                ),
-              );
-            } else {
-              return Container(
-                height: 250.0,
-                width: 300.0,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
+            return Container(
+              height: 250.0,
+              width: 300.0,
+              child: snapshot.hasData
+                  ? Image.network(
+                      getStaticImageWithMarker(snapshot.data),
+                      fit: BoxFit.cover,
+                    )
+                  : Center(child: CircularProgressIndicator()),
+            );
           }),
     );
   }
@@ -147,32 +139,20 @@ class _NewReportDialogState extends State<NewReportDialog> {
   }
 
   Widget _getPhoto() {
-    if (report.photoUrl != null) {
-      return Align(
-        alignment: Alignment.topCenter,
-        child: FadeInImage(
-          image: NetworkImage(report.photoUrl),
-          placeholder: AssetImage('assets/jar-loading.gif'),
-          height: 200.0,
-          fit: BoxFit.contain,
-        ),
-      );
-    } else {
-      return Align(
-        alignment: Alignment.topCenter,
-        child: (foto == null)
-            ? Image(
-                image: AssetImage(foto?.path ?? 'assets/no-image.png'),
-                height: 200.0,
-                fit: BoxFit.cover,
-              )
-            : Image.file(
-                foto,
-                height: 200.0,
-                fit: BoxFit.cover,
-              ),
-      );
-    }
+    return Align(
+      alignment: Alignment.topCenter,
+      child: (foto == null)
+          ? Image(
+              image: AssetImage(foto?.path ?? 'assets/no-image.png'),
+              height: 200.0,
+              fit: BoxFit.cover,
+            )
+          : Image.file(
+              foto,
+              height: 200.0,
+              fit: BoxFit.cover,
+            ),
+    );
   }
 
   _seleccionarFoto() async {
@@ -201,6 +181,13 @@ class _NewReportDialogState extends State<NewReportDialog> {
     } catch (e) {
       currentLocation = null;
     }
+    report.ubication = '{"lat":${currentLocation.latitude},"lon":${currentLocation.longitude} }';
     return currentLocation;
+  }
+
+  void _submitReport() {
+    print("Save");
+    print(foto?.path);
+    print(report.ubication);
   }
 }
