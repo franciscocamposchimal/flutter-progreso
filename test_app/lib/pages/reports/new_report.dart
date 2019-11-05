@@ -193,7 +193,7 @@ class _NewReportDialogState extends State<NewReportDialog> {
     ImageProperties properties =
         await FlutterNativeImage.getImageProperties(loadImage.path);
     print("IMAGE");
-    utils.printError('${properties.height ~/ 10}');
+    //utils.printError('${properties.height ~/ 10}');
     foto = await FlutterNativeImage.compressImage(loadImage.path,
         quality: 50,
         percentage: 50,

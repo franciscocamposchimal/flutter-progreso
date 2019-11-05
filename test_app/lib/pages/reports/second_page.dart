@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/bloc/provider.dart';
 import 'package:test_app/models/report_model.dart';
+import 'package:test_app/pages/reports/detail_report_page.dart';
 import 'package:test_app/pages/reports/new_report.dart';
 import 'package:test_app/providers/auth_provider.dart';
 import 'package:test_app/shared_preferences/shared_preferences.dart';
@@ -67,6 +68,12 @@ class _SecondPageState extends State<SecondPage> {
                   ? Text(item.ubication)
                   : Text('No description'),
               trailing: Icon(Icons.keyboard_arrow_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DetailReport(item)),
+                );
+              },
             ),
           ),
         );
