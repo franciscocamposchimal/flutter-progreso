@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mapbox_search/mapbox_search.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:test_app/bloc/provider.dart';
 
@@ -48,7 +49,7 @@ class _NewReportDialogState extends State<NewReportDialog> {
               _takeImage(),
               _getUbication(),
               SizedBox(height: 20.00),
-              _getDescription(),
+              _getDescription(reportBloc),
               //_submit()
             ],
           ),
@@ -60,7 +61,9 @@ class _NewReportDialogState extends State<NewReportDialog> {
       stream: bloc.isLoadingStream,
       builder: (BuildContext cntx, AsyncSnapshot<bool> snapshot) {
         return snapshot.hasData
-            ? snapshot.data ? CircularProgressIndicator() : Text('Guardar', style: _textStyle())
+            ? snapshot.data
+                ? CircularProgressIndicator()
+                : Text('Guardar', style: _textStyle())
             : Text('Guardar', style: _textStyle());
       },
     );
@@ -70,18 +73,24 @@ class _NewReportDialogState extends State<NewReportDialog> {
     return Theme.of(context).textTheme.subhead.copyWith(color: Colors.white);
   }
 
-  Widget _getDescription() {
+  Widget _getDescription(ReportsBloc bloc) {
     return Center(
       child: Container(
         height: 250.0,
         width: 300.0,
-        child: TextField(
-            maxLines: 6,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Bache, Calle en reparación...',
-              labelText: 'Escríbenos',
-            )),
+        child: StreamBuilder(
+            stream: bloc.descriptionStream,
+            builder: (BuildContext context, snapshot) {
+              return TextField(
+                maxLines: 6,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Bache, Calle en reparación...',
+                  labelText: 'Escríbenos',
+                ),
+                onChanged: bloc.changeDescription,
+              );
+            }),
       ),
     );
   }
@@ -180,8 +189,17 @@ class _NewReportDialogState extends State<NewReportDialog> {
   }
 
   _procesarImagen(ImageSource origen) async {
-    foto = await ImagePicker.pickImage(
-        source: origen, maxWidth: 300, maxHeight: 200);
+    File loadImage = await ImagePicker.pickImage(source: origen);
+    ImageProperties properties =
+        await FlutterNativeImage.getImageProperties(loadImage.path);
+    print("IMAGE");
+    utils.printError('${properties.height ~/ 10}');
+    foto = await FlutterNativeImage.compressImage(loadImage.path,
+        quality: 50,
+        percentage: 50,
+        targetHeight: properties.height ~/ 10,
+        targetWidth: properties.width ~/ 10);
+
     utils.printDebug(foto.path);
     if (foto != null) {
       report.photoUrl = null;

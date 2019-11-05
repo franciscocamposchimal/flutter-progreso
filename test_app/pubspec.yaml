@@ -32,6 +32,7 @@ dependencies:
   flutter_signin_button: ^0.3.0
   progress_dialog: ^1.2.0
   image_picker: ^0.6.1+10
+  flutter_native_image: ^0.0.4
   mapbox_search: ^1.0.4
   geolocator: ^5.1.4+2
 

@@ -17,12 +17,12 @@ class ReportsProvider {
     /// Unique file name for the file
     String filePath = 'images/${DateTime.now()}.jpg';
     StorageReference storageReference = _storage.ref().child(filePath);
-    _uploadTask = storageReference.putFile(image);    
-    await _uploadTask.onComplete;    
-    print('File Uploaded');    
+    _uploadTask = storageReference.putFile(image);
+    await _uploadTask.onComplete;
+    print('File Uploaded');
     String url = await storageReference.getDownloadURL();
     return url;
- }
+  }
 
   //CRUD
   Future<bool> create(Report report) async {
@@ -33,7 +33,6 @@ class ReportsProvider {
       print(e.toString());
       return false;
     }
-    
   }
 
   Future<Report> getOne(String id) async {
@@ -51,7 +50,16 @@ class ReportsProvider {
   Future<List<Report>> getAll() async {
     List<Report> reports = new List();
     var listReport = await _db.getDataCollection();
-    print(listReport);
+    print('GET ALL');
+    print(listReport.documents.length);
+    listReport.documents.forEach((document) {
+      final report = new Report();
+      report.id = document.documentID;
+      report.photoUrl = document.data['photoUrl'];
+      report.ubication = document.data['ubication'];
+      report.description = document.data['description'];
+      reports.add(report);
+    });
     return reports;
   }
 
@@ -60,8 +68,16 @@ class ReportsProvider {
     return true;
   }
 
-  Future<bool> delete(String id) async {
-    await _db.removeDocument(id);
-    return true;
+  Future<bool> delete(String id, String filePath) async {
+    StorageReference storageReference =
+        await _storage.getReferenceFromUrl(filePath);
+    try {
+      await storageReference.delete();
+      await _db.removeDocument(id);
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/bloc/provider.dart';
+import 'package:test_app/models/report_model.dart';
 import 'package:test_app/pages/reports/new_report.dart';
 import 'package:test_app/providers/auth_provider.dart';
 import 'package:test_app/shared_preferences/shared_preferences.dart';
-import 'package:test_app/utils/utils.dart' as utils;
+//import 'package:test_app/utils/utils.dart' as utils;
 
 class SecondPage extends StatefulWidget {
   @override
@@ -10,36 +12,75 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
-
   @override
   Widget build(BuildContext context) {
-    //final reportsBloc = Provider.reportsBlocP(context);
+    final reportsBloc = Provider.reportsBlocP(context);
+    reportsBloc.loadReports();
     final _prefs = new PreferenciasUsuario();
-    utils.printDebug(_prefs.user.photoURL);
+
     return Scaffold(
       appBar: _appBar(_prefs.user.photoURL),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(child: Text('Welcome!!')),
-          SizedBox(height: 40.0),
-          CircularProgressIndicator()
-        ],
-      ),
+      body: _listReports(reportsBloc),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => _openAddEntryDialog(),
       ),
     );
   }
-  void _openAddEntryDialog() {
-  Navigator.of(context).push(new MaterialPageRoute<Null>(
-      builder: (BuildContext context) {
-        return new NewReportDialog();
+
+  Widget _listReports(ReportsBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.reportsStream,
+      builder: (BuildContext cntx, AsyncSnapshot<List<Report>> snapshot) {
+        return snapshot.hasData
+            ? _list(snapshot.data, bloc)
+            : Center(child: CircularProgressIndicator());
       },
-    fullscreenDialog: true
-  ));
-}
+    );
+  }
+
+  Widget _list(List<Report> list, ReportsBloc bloc) {
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (ctx, idx) {
+        final item = list[idx];
+        return Dismissible(
+          key: Key(item.id),
+          onDismissed: (direction) async {
+            await bloc.deleteReport(item.id, item.photoUrl);
+            setState(() {
+              list.removeAt(idx);
+            });
+          },
+          background: Container(color: Colors.redAccent),
+          child: Card(
+            child: ListTile(
+              leading: FadeInImage(
+                fit: BoxFit.cover,
+                placeholder: AssetImage('assets/jar-loading.gif'),
+                image: NetworkImage(item.photoUrl),
+              ),
+              title: item.description != null
+                  ? Text(item.description)
+                  : Text('No description'),
+              subtitle: item.ubication != null
+                  ? Text(item.ubication)
+                  : Text('No description'),
+              trailing: Icon(Icons.keyboard_arrow_right),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _openAddEntryDialog() {
+    Navigator.of(context).push(new MaterialPageRoute<Null>(
+        builder: (BuildContext context) {
+          return new NewReportDialog();
+        },
+        fullscreenDialog: true));
+  }
 
   Widget _appBar(String photo) {
     return AppBar(
