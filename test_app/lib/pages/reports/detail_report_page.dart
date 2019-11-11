@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_search/mapbox_search.dart';
+import 'package:test_app/bloc/provider.dart';
 
 import 'package:test_app/models/report_model.dart';
 import 'package:test_app/utils/utils.dart' as utils;
@@ -17,11 +18,19 @@ class DetailReport extends StatefulWidget {
 class _DetailReportState extends State<DetailReport> {
   MapBoxStaticImage staticImage = MapBoxStaticImage(apiKey: utils.apiKey);
   Geolocator geolocator = Geolocator();
-  bool _isEdit = false;
-  TextEditingController _controller = TextEditingController();
+  TextStyle whiteText = TextStyle(color: Colors.white);
+  ReportsBloc reportBloc;
+  final edition = TextEditingController();
+  @override
+  void dispose() {
+    edition.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    reportBloc = Provider.reportsBlocP(context);
+    edition.value = edition.value.copyWith(text: widget.report.description);
     return Scaffold(
       appBar: AppBar(
         title: Text("Reporte"),
@@ -95,9 +104,12 @@ class _DetailReportState extends State<DetailReport> {
           Icons.edit,
           color: Colors.white,
         ),
-        label: Text('Editar', style: TextStyle(color: Colors.white)),
+        label: Text('Editar', style: whiteText),
         color: Colors.blueAccent,
-        onPressed: () {},
+        onPressed: () {
+          reportBloc.changeIsEdit(
+              reportBloc.isEdit != null ? !reportBloc.isEdit : true);
+        },
       ),
     );
   }
@@ -110,7 +122,7 @@ class _DetailReportState extends State<DetailReport> {
 
   Widget _reportCard() {
     return Container(
-      height: 154.0,
+      height: 180.0,
       margin: EdgeInsets.only(top: 72.0),
       decoration: BoxDecoration(
           color: Color(0xFF333366),
@@ -130,15 +142,14 @@ class _DetailReportState extends State<DetailReport> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(height: 4.0),
-            _textEdit(),
+            Text(widget.report.id, style: whiteText),
             Container(height: 15.0),
-            Text(widget.report.description,
-                style: TextStyle(color: Colors.white)),
             Container(
                 margin: EdgeInsets.symmetric(vertical: 8.0),
                 height: 2.0,
                 width: 18.0,
                 color: Color(0xff00c6ff)),
+            _textEdit(),
           ],
         ),
       ),
@@ -146,17 +157,38 @@ class _DetailReportState extends State<DetailReport> {
   }
 
   Widget _textEdit() {
-    _controller.value =
-        _controller.value.copyWith(text: widget.report.description);
-    return Container(
-      child: _isEdit
-          ? TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: 'Edita tu reporte',
-                labelText: 'Editando',
-              ))
-          : Text(widget.report.id, style: TextStyle(color: Colors.white)),
+    return StreamBuilder(
+        stream: reportBloc.isEditStream,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return Container(
+            child: snapshot.hasData
+                ? snapshot.data
+                    ? _textFieldEdit()
+                    : Text(widget.report.description, style: whiteText)
+                : Text(widget.report.description, style: whiteText),
+          );
+        });
+  }
+
+  Widget _textFieldEdit() {
+    return StreamBuilder(
+      stream: reportBloc.descriptionEditStream,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        print(snapshot.hasData ? reportBloc.descriptionEdit : "No data");
+        return TextField(
+          style: whiteText,
+          controller: edition,
+          decoration: InputDecoration(
+              hintText: 'Edita tu reporte',
+              hintStyle: whiteText,
+              labelText: 'Editando',
+              labelStyle: whiteText,
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              )),
+          onChanged: reportBloc.changeDescriptionEdit,
+        );
+      }
     );
   }
 
