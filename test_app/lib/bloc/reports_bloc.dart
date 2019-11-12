@@ -54,6 +54,12 @@ class ReportsBloc {
   Future<void> deleteReport(String id, String filePath) async {
     await _reportsProvider.delete(id, filePath);
   }
+  //EDIT
+  Future<void> updateReport(Report report) async {
+    changeIsEdit(true);
+    await _reportsProvider.update(report);
+    changeIsEdit(false);
+  }
 
   dispose() {
     print('DISPOSE');

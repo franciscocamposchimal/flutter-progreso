@@ -63,8 +63,8 @@ class ReportsProvider {
     return reports;
   }
 
-  Future<bool> update(Report data, String id) async {
-    await _db.update(data.toJson(), id);
+  Future<bool> update(Report data) async {
+    await _db.update(data.toJson(), data.id);
     return true;
   }
 

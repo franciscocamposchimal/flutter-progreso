@@ -99,18 +99,55 @@ class _DetailReportState extends State<DetailReport> {
   Widget _editDescription() {
     return Container(
       margin: EdgeInsets.only(top: 30.0, left: 100.0, right: 100.0),
-      child: RaisedButton.icon(
-        icon: Icon(
-          Icons.edit,
-          color: Colors.white,
-        ),
-        label: Text('Editar', style: whiteText),
-        color: Colors.blueAccent,
-        onPressed: () {
-          reportBloc.changeIsEdit(
-              reportBloc.isEdit != null ? !reportBloc.isEdit : true);
-        },
+      child: StreamBuilder(
+          stream: reportBloc.isEditStream,
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            return snapshot.hasData
+                ? snapshot.data ? _updateActions() : _editButton()
+                : _editButton();
+          }),
+    );
+  }
+
+  Widget _editButton() {
+    return RaisedButton.icon(
+      icon: Icon(
+        Icons.edit,
+        color: Colors.white,
       ),
+      label: Text('Editar', style: whiteText),
+      color: Colors.blueAccent,
+      onPressed: () {
+        reportBloc.changeIsEdit(
+            reportBloc.isEdit != null ? !reportBloc.isEdit : true);
+      },
+    );
+  }
+
+  Widget _updateActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        RaisedButton.icon(
+          icon: Icon(Icons.save, color: Colors.white),
+          label: Text('Guardar', style: whiteText),
+          color: Colors.green,
+          onPressed: () {
+            widget.report.description = reportBloc.descriptionEdit;
+            print(widget.report.description);
+            reportBloc.updateReport(widget.report);
+          },
+        ),
+        RaisedButton.icon(
+          icon: Icon(Icons.cancel, color: Colors.white),
+          label: Text('Cancelar', style: whiteText),
+          color: Colors.red,
+          onPressed: () {
+            reportBloc.changeIsEdit(
+                reportBloc.isEdit != null ? !reportBloc.isEdit : true);
+          },
+        ),
+      ],
     );
   }
 
@@ -172,24 +209,23 @@ class _DetailReportState extends State<DetailReport> {
 
   Widget _textFieldEdit() {
     return StreamBuilder(
-      stream: reportBloc.descriptionEditStream,
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        print(snapshot.hasData ? reportBloc.descriptionEdit : "No data");
-        return TextField(
-          style: whiteText,
-          controller: edition,
-          decoration: InputDecoration(
-              hintText: 'Edita tu reporte',
-              hintStyle: whiteText,
-              labelText: 'Editando',
-              labelStyle: whiteText,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-              )),
-          onChanged: reportBloc.changeDescriptionEdit,
-        );
-      }
-    );
+        stream: reportBloc.descriptionEditStream,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          //print(snapshot.hasData ? reportBloc.descriptionEdit : "No data");
+          return TextField(
+            style: whiteText,
+            controller: edition,
+            decoration: InputDecoration(
+                hintText: 'Edita tu reporte',
+                hintStyle: whiteText,
+                labelText: 'Editando',
+                labelStyle: whiteText,
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                )),
+            onChanged: reportBloc.changeDescriptionEdit,
+          );
+        });
   }
 
   Widget _reportThumb() {
