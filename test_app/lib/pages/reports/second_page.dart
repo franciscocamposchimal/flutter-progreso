@@ -56,10 +56,16 @@ class _SecondPageState extends State<SecondPage> {
           background: Container(color: Colors.redAccent),
           child: Card(
             child: ListTile(
-              leading: FadeInImage(
-                fit: BoxFit.cover,
-                placeholder: AssetImage('assets/jar-loading.gif'),
-                image: NetworkImage(item.photoUrl),
+              leading: Hero(
+                tag: item.id,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(35),
+                  child: FadeInImage(
+                    fit: BoxFit.cover,
+                    placeholder: AssetImage('assets/jar-loading.gif'),
+                    image: NetworkImage(item.photoUrl),
+                  ),
+                ),
               ),
               title: item.description != null
                   ? Text(item.description)

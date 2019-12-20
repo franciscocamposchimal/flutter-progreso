@@ -33,7 +33,6 @@ class Report {
   }
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "photoUrl": photoUrl,
         "ubication": ubication,
         "description": description,
